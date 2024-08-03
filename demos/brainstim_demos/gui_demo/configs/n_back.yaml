@@ -1,0 +1,38 @@
+configs:
+  fps:
+    value: 60
+    unit: fps
+  win_size_width:
+    value: 1920
+    unit: px
+  win_size_height:
+    value: 1080
+    unit: px
+  rest_time:
+    value: 1
+    unit: second
+  response_time:
+    value: 2
+    unit: second
+  display_time:
+    value: 1
+    unit: second
+  display_result_time:
+    value: 1
+    unit: second
+  num_blocks:
+    value: 5
+    unit: blocks
+  num_trials_per_block:
+    value: 10
+  stimuli_symbols:
+    value:
+      - "A"
+      - "B"
+      - "C"
+      - "D"
+    type:
+      array
+  n_back_types:
+    value: [1, 2, 3, 4]
+    type: checkbox

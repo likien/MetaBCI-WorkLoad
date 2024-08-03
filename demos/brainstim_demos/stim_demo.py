@@ -15,6 +15,8 @@ from metabci.brainstim.paradigm import (
 from metabci.brainstim.framework import Experiment
 from psychopy.tools.monitorunittools import deg2pix
 
+from metabci.brainstim.paradigm import N_Back, arithmetic_task
+
 if __name__ == "__main__":
     mon = monitors.Monitor(
         name="primary_monitor",
@@ -463,6 +465,103 @@ if __name__ == "__main__":
         port_addr=port_addr,
         nrep=nrep,
         pdim="ssavep",
+        lsl_source_id=lsl_source_id,
+        online=online,
+    )
+
+    """
+        N-BACK
+    """
+    fps = 60  # note 屏幕刷新率
+    text_pos = (0.0, 0.0)  # 提示文本位置
+    tex_color = 2 * np.array([179, 45, 0]) / 255 - 1  # 提示文本颜色
+    symbol_height = 100  # 提示文本的高度
+    stim_length = 288  # 长度
+    stim_width = 288  # 宽度
+    n_back = N_Back(win=win)
+    n_back.config_color(
+        refresh_rate=fps,
+        text_pos=text_pos,
+        tex_color=tex_color,
+        symbol_height=symbol_height,
+    )
+    n_back.config_response()
+
+    n_back.config_experiment_info(
+        num_trials_per_block=4,
+        display_result_time=1,
+        stimuli_symbols=['A', 'B', 'C', 'D'],
+        n_back_types=[2, 4]
+    )
+
+    bg_color = np.array([-1, -1, -1])  # 背景颜色
+    display_time = 1  # 范式开始 1s 的warm时长
+    rest_time = 1  # 提示后的休息时长
+    response_time = 2  # 在线反馈
+    # port_addr = "COM8"  #  0xdefc    # 采集主机端口
+    port_addr = None  # 采集主机端口
+    nrep = 3  # block数目
+    lsl_source_id = "meta_online_worker"  # source id
+    online = False  # todo True                                       # 在线实验的标志
+    ex.register_paradigm(
+        "N-Back Workload",
+        paradigm,
+        VSObject=n_back,
+        bg_color=bg_color,
+        display_time=display_time,
+        # index_time=index_time,
+        rest_time=rest_time,
+        response_time=response_time,
+        port_addr=port_addr,
+        nrep=nrep,
+        # image_time=image_time,
+        pdim="workload-n-back",
+        lsl_source_id=lsl_source_id,
+        online=online,
+    )
+
+    """
+        Arithmetic Task
+    """
+    fps = 60  # note 屏幕刷新率
+    text_pos = (0.0, 0.0)  # 提示文本位置
+    tex_color = 2 * np.array([179, 45, 0]) / 255 - 1  # 提示文本颜色
+    symbol_height = 100  # 提示文本的高度
+    stim_length = 288  # 长度
+    stim_width = 288  # 宽度
+    n_back = arithmetic_task(win=win)
+    n_back.config_color(
+        refresh_rate=fps,
+        text_pos=text_pos,
+        tex_color=tex_color,
+        symbol_height=symbol_height,
+    )
+    n_back.config_response()
+    n_back.config_experiment_info(
+        num_trials_per_block=4,
+        display_result_time=1
+    )
+
+    bg_color = np.array([-1, -1, -1])  # 背景颜色
+    display_time = 4  # 范式开始 4s 的warm时长
+    rest_time = 2  # 提示后的休息时长
+    response_time = 2  # 在线反馈
+    # port_addr = "COM8"  #  0xdefc    # 采集主机端口
+    port_addr = None  # 采集主机端口
+    nrep = 3  # block数目
+    lsl_source_id = "meta_online_worker"  # source id
+    online = False  # 在线实验的标志
+    ex.register_paradigm(
+        "Arithmetic Task Workload",
+        paradigm,
+        VSObject=n_back,
+        bg_color=bg_color,
+        display_time=display_time,
+        rest_time=rest_time,
+        response_time=response_time,
+        port_addr=port_addr,
+        nrep=nrep,  # block 次数
+        pdim="workload-arithmetic",
         lsl_source_id=lsl_source_id,
         online=online,
     )

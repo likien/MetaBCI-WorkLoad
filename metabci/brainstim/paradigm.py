@@ -17,6 +17,9 @@ import random
 from scipy import signal
 from PIL import Image
 
+import re
+from psychopy import core
+
 
 # prefunctions
 
@@ -221,13 +224,13 @@ class KeyboardInterface(object):
         self.win_size = np.array(win_size)  # e.g. [1920,1080]
 
     def config_pos(
-        self,
-        n_elements=40,
-        rows=5,
-        columns=8,
-        stim_pos=None,
-        stim_length=150,
-        stim_width=150,
+            self,
+            n_elements=40,
+            rows=5,
+            columns=8,
+            stim_pos=None,
+            stim_length=150,
+            stim_width=150,
     ):
         """Set the number, position, and size parameters of the stimulus block.
 
@@ -272,7 +275,7 @@ class KeyboardInterface(object):
             stim_pos = np.zeros((self.n_elements, 2))
             # divide the whole screen into rows*columns' blocks, and pick the center of each block
             first_pos = (
-                np.array([self.win_size[0] / columns, self.win_size[1] / rows]) / 2
+                    np.array([self.win_size[0] / columns, self.win_size[1] / rows]) / 2
             )
             if (first_pos[0] < stim_length / 2) or (first_pos[1] < stim_width / 2):
                 raise Exception("Too much blocks or too big the stimulus region!")
@@ -296,7 +299,7 @@ class KeyboardInterface(object):
         self.rows = rows
 
     def config_text(
-        self, unit="pix", symbols=None, symbol_height=0, tex_color=[1, 1, 1]
+            self, unit="pix", symbols=None, symbol_height=0, tex_color=[1, 1, 1]
     ):
         """Sets the characters within the stimulus block.
 
@@ -348,11 +351,11 @@ class KeyboardInterface(object):
             )
 
     def config_response(
-        self,
-        symbol_text="Speller:  ",
-        symbol_height=0,
-        symbol_color=(1, 1, 1),
-        bg_color=[-1, -1, -1],
+            self,
+            symbol_text="Speller:  ",
+            symbol_height=0,
+            symbol_color=(1, 1, 1),
+            bg_color=[-1, -1, -1],
     ):
         """Sets the character of the online response.
 
@@ -604,13 +607,13 @@ class SSVEP(VisualStim):
         super().__init__(win=win, colorSpace=colorSpace, allowGUI=allowGUI)
 
     def config_color(
-        self,
-        refresh_rate,
-        stim_time,
-        stim_color,
-        stimtype="sinusoid",
-        stim_opacities=1,
-        **kwargs
+            self,
+            refresh_rate,
+            stim_time,
+            stim_color,
+            stimtype="sinusoid",
+            stim_opacities=1,
+            **kwargs
     ):
         """Config color of stimuli.
 
@@ -668,14 +671,14 @@ class SSVEP(VisualStim):
         # check consistency
         if stimtype == "sinusoid":
             self.stim_colors = (
-                sinusoidal_sample(
-                    freqs=self.freqs,
-                    phases=self.phases,
-                    srate=self.refresh_rate,
-                    frames=self.stim_frames,
-                    stim_color=stim_color,
-                )
-                - 1
+                    sinusoidal_sample(
+                        freqs=self.freqs,
+                        phases=self.phases,
+                        srate=self.refresh_rate,
+                        frames=self.stim_frames,
+                        stim_color=stim_color,
+                    )
+                    - 1
             )
             if self.stim_colors[0].shape[0] != self.n_elements:
                 raise Exception("Please input correct num of stims!")
@@ -790,7 +793,7 @@ class P300(VisualStim):
         super().__init__(win=win, colorSpace=colorSpace, allowGUI=allowGUI)
 
     def config_color(
-        self, refresh_rate=0, stim_duration=0.1, stim_ISI=0.025, stim_round=1
+            self, refresh_rate=0, stim_duration=0.1, stim_ISI=0.025, stim_round=1
     ):
         """Configure P300 paradigm interface parameters, including screen refresh rate
         and row to column transition time interval.
@@ -855,12 +858,12 @@ class P300(VisualStim):
             order_row_col = np.array(l_row_order_index + l_col_order_index)
             # print(order_row_col.shape)
             self.order_index[
-                (round_num * (row_num + col_num)): (
+            (round_num * (row_num + col_num)): (
                     (round_num + 1) * (row_num + col_num)
-                )
+            )
             ] = order_row_col[
                 :
-            ]  # event label
+                ]  # event label
             # print(self.order_index)
 
             # Determine row and column char status
@@ -888,11 +891,11 @@ class P300(VisualStim):
             tmp = 0
             for col_i in col_order_index:
                 stim_colors_col[
-                    (col_i * row_num): ((col_i + 1) * row_num),
-                    int(tmp * refresh_rate * (stim_duration + stim_ISI)): int(
-                        tmp * refresh_rate * (stim_duration + stim_ISI)
-                        + refresh_rate * (stim_duration)
-                    ),
+                (col_i * row_num): ((col_i + 1) * row_num),
+                int(tmp * refresh_rate * (stim_duration + stim_ISI)): int(
+                    tmp * refresh_rate * (stim_duration + stim_ISI)
+                    + refresh_rate * (stim_duration)
+                ),
                 ] = [-1, -1, -1]
                 col_label[int(tmp * refresh_rate * (stim_duration + stim_ISI))] = 1
                 tmp += 1
@@ -901,11 +904,11 @@ class P300(VisualStim):
             for row_i in row_order_index:
                 for col_i in range(col_num):
                     stim_colors_row[
-                        (row_i + row_num * col_i),
-                        int(tmp * refresh_rate * (stim_duration + stim_ISI)): int(
-                            tmp * refresh_rate * (stim_duration + stim_ISI)
-                            + refresh_rate * stim_duration
-                        ),
+                    (row_i + row_num * col_i),
+                    int(tmp * refresh_rate * (stim_duration + stim_ISI)): int(
+                        tmp * refresh_rate * (stim_duration + stim_ISI)
+                        + refresh_rate * stim_duration
+                    ),
                     ] = [-1, -1, -1]
                     row_label[int(tmp * refresh_rate * (stim_duration + stim_ISI))] = 1
                 tmp += 1
@@ -1050,18 +1053,18 @@ class MI(VisualStim):
         )
 
     def config_color(
-        self,
-        refresh_rate=60,
-        text_pos=(0.0, 0.0),
-        left_pos=[[-480, 0.0]],
-        right_pos=[[480, 0.0]],
-        tex_color=(1, -1, -1),
-        normal_color=[[-0.8, -0.8, 0.8]],
-        image_color=[[1, 1, 1]],
-        symbol_height=100,
-        n_Elements=1,
-        stim_length=288,
-        stim_width=162,
+            self,
+            refresh_rate=60,
+            text_pos=(0.0, 0.0),
+            left_pos=[[-480, 0.0]],
+            right_pos=[[480, 0.0]],
+            tex_color=(1, -1, -1),
+            normal_color=[[-0.8, -0.8, 0.8]],
+            image_color=[[1, 1, 1]],
+            symbol_height=100,
+            n_Elements=1,
+            stim_length=288,
+            stim_width=162,
     ):
         """Config color of stimuli.
 
@@ -1322,14 +1325,14 @@ class AVEP(VisualStim):
     """
 
     def __init__(
-        self,
-        win,
-        dot_shape="circle",
-        n_rep=5,
-        duty=0.5,
-        cluster_num=1,
-        colorSpace="rgb",
-        allowGUI=True,
+            self,
+            win,
+            dot_shape="circle",
+            n_rep=5,
+            duty=0.5,
+            cluster_num=1,
+            colorSpace="rgb",
+            allowGUI=True,
     ):
         """Item class from VisualStim.
 
@@ -1432,20 +1435,20 @@ class AVEP(VisualStim):
                     width_rand = random.randint(-3, 3)
                     height_rand = random.randint(-3, 3)
                     self.stim_dot_pos[
-                        stim_i,
-                        clu_i * self.n_elements: (clu_i + 1) * self.n_elements,
-                        :,
-                        0,
+                    stim_i,
+                    clu_i * self.n_elements: (clu_i + 1) * self.n_elements,
+                    :,
+                    0,
                     ] = (
-                        dot_pos[..., 0] + width_rand
+                            dot_pos[..., 0] + width_rand
                     )
                     self.stim_dot_pos[
-                        stim_i,
-                        clu_i * self.n_elements: (clu_i + 1) * self.n_elements,
-                        :,
-                        1,
+                    stim_i,
+                    clu_i * self.n_elements: (clu_i + 1) * self.n_elements,
+                    :,
+                    1,
                     ] = (
-                        dot_pos[..., 1] + height_rand
+                            dot_pos[..., 1] + height_rand
                     )
 
     def config_dot_color(self):
@@ -1464,7 +1467,7 @@ class AVEP(VisualStim):
         self.stim_colors = stim_colors
 
     def config_color(
-        self, refresh_rate, stim_time, stim_color, sequence, stim_opacities=1, **kwargs
+            self, refresh_rate, stim_time, stim_color, sequence, stim_opacities=1, **kwargs
     ):
         """Set AVEP paradigm interface parameters, including screen refresh rate, stimulus time, and stimulus color.
 
@@ -1748,7 +1751,7 @@ class SSAVEP(VisualStim):
     """
 
     def __init__(
-        self, win, n_elements=20, n_members=8, colorSpace="rgb", allowGUI=True
+            self, win, n_elements=20, n_members=8, colorSpace="rgb", allowGUI=True
     ):
         self.n_members = n_members
         self.n_elements = n_elements
@@ -1756,14 +1759,14 @@ class SSAVEP(VisualStim):
         super().__init__(win, colorSpace, allowGUI)
 
     def config_member_pos(
-        self,
-        win,
-        radius=0.1,
-        angles=[0],
-        outter_deg=4,
-        inner_deg=1.5,
-        tex_pix=128,
-        sep_line_pix=16,
+            self,
+            win,
+            radius=0.1,
+            angles=[0],
+            outter_deg=4,
+            inner_deg=1.5,
+            tex_pix=128,
+            sep_line_pix=16,
     ):
         """
         Config color of stimuli.
@@ -1832,12 +1835,12 @@ class SSAVEP(VisualStim):
         self.sep_line_pix = sep_line_pix
 
     def config_stim(
-        self,
-        win,
-        sizes=[[0.1, 0.1]],
-        stim_color=[[1.0, 1.0, 1.0]],
-        stim_opacities=[1],
-        member_degree=None,
+            self,
+            win,
+            sizes=[[0.1, 0.1]],
+            stim_color=[[1.0, 1.0, 1.0]],
+            stim_opacities=[1],
+            member_degree=None,
     ):
         """
         Config color of stimuli.
@@ -1886,7 +1889,7 @@ class SSAVEP(VisualStim):
         )
 
     def config_ring(
-        self, win, sizes=[[0.3, 0.3]], ring_colors=[1, 1, 1], opacities=[1.0]
+            self, win, sizes=[[0.3, 0.3]], ring_colors=[1, 1, 1], opacities=[1.0]
     ):
         """
         Config color of rings around the stimuli.
@@ -1925,7 +1928,7 @@ class SSAVEP(VisualStim):
         )
 
     def config_target(
-        self, win, sizes=[[0.2, 0.2]], target_colors=[1, 0, 0], opacities=[1.0]
+            self, win, sizes=[[0.2, 0.2]], target_colors=[1, 0, 0], opacities=[1.0]
     ):
         """
         Config color of targets at the center of each stimulus.
@@ -1963,14 +1966,14 @@ class SSAVEP(VisualStim):
         )
 
     def config_flash_array(
-        self,
-        refresh_rate=60,
-        freqs=[15],
-        phases=[0],
-        codes=[[0], [1], [2], [3]],
-        stim_time_member=0.5,
-        stim_color=[1, 1, 1],
-        stimtype="sinusoid",
+            self,
+            refresh_rate=60,
+            freqs=[15],
+            phases=[0],
+            codes=[[0], [1], [2], [3]],
+            stim_time_member=0.5,
+            stim_color=[1, 1, 1],
+            stimtype="sinusoid",
     ):
         """
         Config flash sequence array of stimuli.
@@ -2010,14 +2013,14 @@ class SSAVEP(VisualStim):
         self.stimtype = stimtype
         if stimtype == "sinusoid":
             self.stim_colors_member = (
-                sinusoidal_sample(
-                    freqs=self.freqs,
-                    phases=self.phases,
-                    srate=self.refresh_rate,
-                    frames=self.stim_frames_member,
-                    stim_color=stim_color,
-                )
-                - 1
+                    sinusoidal_sample(
+                        freqs=self.freqs,
+                        phases=self.phases,
+                        srate=self.refresh_rate,
+                        frames=self.stim_frames_member,
+                        stim_color=stim_color,
+                    )
+                    - 1
             )
         self.n_sequence = np.shape(self.codes)[1]
         self.stim_time = self.stim_time_member * self.n_sequence
@@ -2030,30 +2033,30 @@ class SSAVEP(VisualStim):
             for seq_idx in range(self.n_sequence):
                 for seq_group_idx in range(len(tar_codes[seq_idx])):
                     self.stim_colors1[
-                        :,
-                        tar_idx * self.n_members + tar_codes[seq_idx][seq_group_idx],
-                        seq_idx,
-                        :,
+                    :,
+                    tar_idx * self.n_members + tar_codes[seq_idx][seq_group_idx],
+                    seq_idx,
+                    :,
                     ] = self.stim_colors_member[
                         :,
                         tar_idx * self.n_members + tar_codes[seq_idx][seq_group_idx],
                         :,
-                    ]
+                        ]
         self.stim_colors = np.concatenate(
             [self.stim_colors1[:, :, i, :] for i in range(self.n_sequence)], axis=0
         )
 
     def config_color(
-        self,
-        win,
-        refresh_rate=60,
-        freqs=[15],
-        phases=[0],
-        codes=[[0], [1], [2], [3]],
-        stim_time_member=0.5,
-        stim_color=[1.0, 1.0, 1.0],
-        stimtype="sinusoid",
-        sizes=[0.1, 0.1],
+            self,
+            win,
+            refresh_rate=60,
+            freqs=[15],
+            phases=[0],
+            codes=[[0], [1], [2], [3]],
+            stim_time_member=0.5,
+            stim_color=[1.0, 1.0, 1.0],
+            stimtype="sinusoid",
+            sizes=[0.1, 0.1],
     ):
         """
         Config color of stimuli.
@@ -2213,20 +2216,20 @@ class SSAVEP(VisualStim):
         win.clearBuffer()
 
     def create_elements(
-        self,
-        win,
-        units="pix",
-        elementTex=None,
-        elementMask=None,
-        nElements=1,
-        frames=1,
-        sizes=[[0.1, 0.1]],
-        xys=[[0, 0]],
-        oris=[0],
-        colors=[[1, 1, 1]],
-        contrs=[1],
-        opacities=[1],
-        texRes=48,
+            self,
+            win,
+            units="pix",
+            elementTex=None,
+            elementMask=None,
+            nElements=1,
+            frames=1,
+            sizes=[[0.1, 0.1]],
+            xys=[[0, 0]],
+            oris=[0],
+            colors=[[1, 1, 1]],
+            contrs=[1],
+            opacities=[1],
+            texRes=48,
     ):
         """
         create the specific elements.
@@ -2388,20 +2391,20 @@ class GetPlabel_MyTherad:
 
 
 def paradigm(
-    VSObject,
-    win,
-    bg_color,
-    display_time=1.0,
-    index_time=1.0,
-    rest_time=0.5,
-    response_time=2,
-    image_time=2,
-    port_addr=9045,
-    nrep=1,
-    pdim="ssvep",
-    lsl_source_id=None,
-    online=None,
-    device_type="NeuroScan",
+        VSObject,
+        win,
+        bg_color,
+        display_time=1.0,
+        index_time=1.0,
+        rest_time=0.5,
+        response_time=2,
+        image_time=2,
+        port_addr=9045,
+        nrep=1,
+        pdim="ssvep",
+        lsl_source_id=None,
+        online=None,
+        device_type="NeuroScan",
 ):
     """
     The classical paradigm is implemented, the task flow is defined, the ' q '
@@ -2477,11 +2480,11 @@ def paradigm(
     inlet = False
     if online:
         if (
-            pdim == "ssvep"
-            or pdim == "p300"
-            or pdim == "con-ssvep"
-            or pdim == "avep"
-            or pdim == "ssavep"
+                pdim == "ssvep"
+                or pdim == "p300"
+                or pdim == "con-ssvep"
+                or pdim == "avep"
+                or pdim == "ssavep"
         ):
             VSObject.text_response.text = copy(VSObject.reset_res_text)
             VSObject.text_response.pos = copy(VSObject.reset_res_pos)
@@ -2573,7 +2576,7 @@ def paradigm(
                 samples, timestamp = inlet.pull_sample()
                 predict_id = int(samples[0]) - 1  # online predict id
                 VSObject.symbol_text = (
-                    VSObject.symbol_text + VSObject.symbols[predict_id]
+                        VSObject.symbol_text + VSObject.symbols[predict_id]
                 )
                 res_text_pos = (
                     res_text_pos[0] + VSObject.symbol_height / 3,
@@ -2677,7 +2680,7 @@ def paradigm(
                 samples, timestamp = inlet.pull_sample()
                 predict_id = int(samples[0]) - 1  # online predict id
                 VSObject.symbol_text = (
-                    VSObject.symbol_text + VSObject.symbols[predict_id]
+                        VSObject.symbol_text + VSObject.symbols[predict_id]
                 )
                 res_text_pos = (
                     res_text_pos[0] + VSObject.symbol_height / 3,
@@ -2795,7 +2798,7 @@ def paradigm(
                 samples, timestamp = inlet.pull_sample()
                 predict_id = int(samples[0]) - 1  # online predict id
                 VSObject.symbol_text = (
-                    VSObject.symbol_text + VSObject.symbols[predict_id]
+                        VSObject.symbol_text + VSObject.symbols[predict_id]
                 )
                 res_text_pos = (
                     res_text_pos[0] + VSObject.symbol_height / 3,
@@ -3100,7 +3103,7 @@ def paradigm(
                 samples, timestamp = inlet.pull_sample()
                 predict_id = int(samples[0]) - 1  # online predict id
                 VSObject.symbol_text = (
-                    VSObject.symbol_text + VSObject.symbols[predict_id]
+                        VSObject.symbol_text + VSObject.symbols[predict_id]
                 )
                 res_text_pos = (
                     res_text_pos[0] + VSObject.symbol_height / 3,
@@ -3116,3 +3119,558 @@ def paradigm(
                     VSObject.text_response.draw()
                     iframe += 1
                     win.flip()
+
+    elif pdim == "workload-n-back":
+
+        key_yes = 'space'  # 被试认为正确的键
+        key_no = 'rctrl'  # 被试认为错位的键
+        key_quit = 'q'  # 退出键
+        key_enter = 'return'  # Enter 键
+        key_list = [key_yes, key_no, key_quit]
+
+        # -----------------
+        # 显示实验说明的图片和相关提示
+        text_content = "认为正确请按：空格键；认为错误请按：右ctrl键。\n 按下 Enter 键开始实验"
+        text_content = add_spaces_between_chinese_chars(text_content)
+        VSObject.intro_text_prompt.text = text_content
+
+        VSObject.intro_img_stimuli.draw()
+        VSObject.intro_text_prompt.draw()
+        win.flip()
+
+        # 等待按下 Enter 键开始实验
+        while True:
+            keys = event.getKeys([key_quit, key_enter])
+            if key_enter in keys:
+                break
+            elif key_quit in keys:
+                core.quit()
+            core.wait(0.2)
+
+            VSObject.intro_img_stimuli.draw()
+            VSObject.intro_text_prompt.draw()
+            win.flip()
+
+        # -----------------
+
+        stimuli_symbols = VSObject.stimuli_symbols  # 定义刺激和响应
+        n_back_types = VSObject.n_back_types  # 自定义每个区块的 N-BACK 类型
+        trials_per_block = VSObject.num_trials_per_block  # 每个区块的试次数
+        display_result_time = VSObject.display_result_time  # 展示回答结果的时间
+
+        # 存储所有的trial 事件的数组
+        all_trials = []
+        # 每个类型一个block
+        for block in range(len(n_back_types)):
+            block_conditions = [{'stimulus': random.choice(stimuli_symbols), 'n_back': n_back_types[block]} for _ in
+                                range(trials_per_block)]
+            all_trials.extend(block_conditions)
+
+        # 创建
+        trials = data.TrialHandler(all_trials, nReps=1, name="N-Back Task", method="sequential")
+
+        responses = []  # 保存响应数据
+        before_block = 0
+        current_trial_cnt = -1  # 记录每个block下的trial，从0开始计数
+
+        # -----------------------------
+        if port:
+            port.setData(0)
+
+        for i, trial in enumerate(trials):
+            current_block = i // trials_per_block + 1  # 计算当前 第几个 block
+            current_n_back_type = trial['n_back']  # 获取当前 block 的 N-BACK 类型
+            current_trial_cnt += 1  # 累计当前 block 下 trial，从0开始
+
+            if before_block != current_block:
+                text = f"请回答前{current_n_back_type}个遇到的符号跟当前符号是否正确"
+
+                VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt,
+                                        text_content=text, wait_time=display_time * 5)
+
+                before_block = current_block
+                current_trial_cnt = 0
+
+            # 记录开始时间
+            start_time = round(core.getTime(), 2)
+
+            VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus,
+                                    text_content=f"{trial['stimulus']}", wait_time=display_time)
+
+            keys = None
+            if current_trial_cnt >= current_n_back_type:
+                keys = VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus,
+                                               text_content="请回答", keyboard=key_list, wait_time=response_time)
+            else:
+                VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus,
+                                        text_content="下一个", wait_time=response_time)
+
+            # 记录结束时间
+            end_time = round(core.getTime(), 2)
+
+            if keys and key_quit in keys:
+                break
+
+            # 检查响应是否正确
+            if current_trial_cnt >= current_n_back_type:
+                correct_answer = trials.trialList[i - current_n_back_type]['stimulus']  # 记录正确答案
+                # 读取按键
+                answer_question_key = None
+
+                print(keys)
+
+                if keys is not None and len(keys) != 0:
+                    answer_question_key = keys[0]
+
+                # answer_question_key = 'space' if keys and 'space' in keys else None  # 参与者是否回答
+                correct = trial['stimulus'] == correct_answer  # 评估参与者的回答是否正确
+
+                responses.append((current_block, trial['stimulus'], correct_answer, answer_question_key,
+                                  correct, start_time, end_time))
+
+                if answer_question_key is None:
+                    # The subject did not answer
+                    VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答超时',
+                                            wait_time=display_result_time)
+                else:
+                    if (correct and answer_question_key == key_yes) or (not correct and answer_question_key == key_no):
+                        # The subject answered correctly
+                        VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答正确',
+                                                wait_time=display_result_time)
+                    else:
+                        # Subject answered incorrectly
+                        VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答错误',
+                                                wait_time=display_result_time)
+            else:
+                responses.append((current_block, trial['stimulus'], None, None, False, start_time, end_time))
+
+            # 等待一段时间以便显示下一个刺激
+            core.wait(rest_time)
+
+    elif pdim == "workload-arithmetic":
+        key_option1 = 'space'
+        key_option2 = 'rctrl'
+        key_quit = 'q'
+        key_enter = 'return'
+
+        key_list = [key_option1, key_option2, key_quit]
+
+        # -----------------
+        # 显示实验说明的图片和相关提示
+        text_content = "认为正确请按：空格键，认为错误请按：右ctrl键。\n 按下 Enter 键开始实验"
+        text_content = add_spaces_between_chinese_chars(text_content)
+        VSObject.intro_text_prompt.text = text_content
+
+        VSObject.intro_img_stimuli.draw()
+        VSObject.intro_text_prompt.draw()
+        win.flip()
+
+        # 等待按下 Enter 键开始实验
+        while True:
+            keys = event.getKeys([key_quit, key_enter])
+            if key_enter in keys:
+                break
+            elif key_quit in keys:
+                core.quit()
+            core.wait(0.2)
+
+            VSObject.intro_img_stimuli.draw()
+            VSObject.intro_text_prompt.draw()
+            win.flip()
+
+        # -----------------
+
+        responses = []
+        display_result_time = VSObject.display_result_time
+
+        conditions = []
+        blocks = nrep  # 每种任务的重复次数
+        num_trials_per_block = VSObject.num_trials_per_block  # 每个区块的试次数
+
+        for block in range(blocks):
+            for task_type in VSObject.task_types:
+                conditions.extend([{'task_type': task_type, 'block': block + 1} for _ in range(num_trials_per_block)])
+
+        trials = data.TrialHandler(conditions, nReps=1, method='sequential')
+
+        # 设定正确答案出现的占比
+        correct_answer_rate = 0.5
+        num_all_trials = len(conditions)
+        selected_answer_indices = [0 if i < num_all_trials * correct_answer_rate else 1 for i in range(num_all_trials)]
+        random.shuffle(selected_answer_indices)
+
+        # 初始化区块信息
+        before_task_type = 0
+        # 迭代试次
+        for i, trial in enumerate(trials):
+            # current_block = trial['block']
+            task_type = trial['task_type']
+
+            if before_task_type != task_type:
+                VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus,
+                                        text_content=f"任务类型: {task_type}", wait_time=display_time)
+                before_task_type = task_type
+
+            stimulus, answers, correct_answer = VSObject.generate_arithmetic_task(task_type)
+
+            VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus, text_content=f"{stimulus}",
+                                    wait_time=display_time)
+
+            start_time = core.getTime()
+
+            keys = VSObject.display_prompt(window=win, text_stim=VSObject.text_stimulus,
+                                           text_content=f"{answers[selected_answer_indices[i]]}",
+                                           keyboard=key_list, wait_time=response_time)
+
+            end_time = core.getTime()
+
+            if keys and key_quit in keys:
+                # Exit the experiment
+                break
+
+            # Use the first pressed key as the answer
+            answer_question_key = keys[0] if keys else None
+
+            correct = None
+            if answer_question_key == key_option1:
+                correct = answers[selected_answer_indices[i]] == correct_answer
+            elif answer_question_key == key_option2:
+                correct = answers[selected_answer_indices[i]] != correct_answer
+
+            responses.append((task_type, stimulus, answers[0], answers[1], correct_answer,
+                              answer_question_key, correct, start_time, end_time))
+
+            if answer_question_key is None:
+                # The subject did not answer
+                VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答超时',
+                                        wait_time=display_result_time)
+            else:
+                if correct:
+                    # The subject answered correctly
+                    VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答正确',
+                                            wait_time=display_result_time)
+                else:
+                    # Subject answered incorrectly
+                    VSObject.display_prompt(window=win, text_stim=VSObject.text_prompt, text_content='回答错误',
+                                            wait_time=display_result_time)
+
+            core.wait(rest_time)
+
+
+class N_Back(VisualStim):
+    """
+    Create N_Back stimuli.
+
+    The subclass N_Back inherits from the parent class VisualStim.
+
+    Created on: 2022-07-30
+
+    Parameters
+    ----------
+        win:
+            The window object.
+        colorSpace: str
+            The color space, default to rgb.
+        allowGUI: bool
+            Defaults to True, which allows frame-by-frame drawing and key-exit.
+
+    """
+
+    def __init__(self, win, colorSpace="rgb", allowGUI=True):
+        super().__init__(win=win, colorSpace=colorSpace, allowGUI=allowGUI)
+
+        # 获得图像的路径
+        self.intro_img_path = os.path.join(
+            os.path.abspath(os.path.dirname(os.path.abspath(__file__))),
+            "imgs" + os.sep + "introduction_n_back.jpg",
+        )
+
+    def display_prompt(self, window, text_stim, text_content, keyboard=None, fps=60, wait_time=0.0):
+        """
+        显示提示信息
+        :param window: PsychoPy窗口对象
+        :param text_stim: TextStim对象
+        :param text_content: 显示的文本内容
+        :param keyboard: 要监控的按键
+        :param fps: 帧率
+        :param wait_time: 等待时间（秒）
+        :return: None
+        """
+        text_content = add_spaces_between_chinese_chars(text_content)  # 在中文之间添加空格，实现自动换行
+        text_stim.text = text_content
+
+        # 计算总帧数
+        keys = []
+        iframe = 0
+        total_frames = int(fps * wait_time)
+
+        while iframe < total_frames:
+            # 绘制文本刺激
+            text_stim.draw()
+            # 刷新屏幕
+            window.flip()
+
+            if keyboard is not None and len(keys) == 0:
+                # 检查键盘输入
+                keys = event.getKeys(keyboard)
+
+            # 增加帧计数
+            iframe += 1
+
+        event.clearEvents(eventType='keyboard')
+        return keys
+
+    def config_color(
+            self,
+            refresh_rate=60,
+            text_pos=(0.0, 0.0),
+            tex_color=(1, -1, -1),
+            symbol_height=100,
+            prompt_symbol_height=40,
+    ):
+        """Config color of stimuli.
+
+        Parameters
+        ----------
+            refresh_rate: int
+                Refresh rate of screen.
+            text_pos: ndarray, shape(x, y)
+                The position of the prompt text ("start").
+            tex_color: ndarray, shape(red, green, blue)
+               The color of the stimulating text, ranging from -1.0 to 1.0.
+            symbol_height: float
+                The height of the prompt text.
+            prompt_symbol_height: float
+                The height of the symbol prompt text.
+
+        """
+        self.refresh_rate = refresh_rate
+        if refresh_rate == 0:
+            refresh_rate = np.floor(
+                self.win.getActualFrameRate(nIdentical=20, nWarmUpFrames=20)
+            )
+
+        if symbol_height == 0:
+            symbol_height = int(self.win_size[1] / 6)
+
+        # note 文本提示
+        self.text_stimulus = visual.TextStim(
+            self.win,
+            text="start",
+            font="Times New Roman",
+            pos=text_pos,
+            color=tex_color,
+            units="pix",
+            height=symbol_height,
+            bold=True,
+        )
+
+        self.text_prompt = visual.TextStim(
+            self.win,
+            text="start",
+            font="Times New Roman",
+            pos=text_pos,
+            color=tex_color,
+            units="pix",
+            height=prompt_symbol_height,
+            bold=True,
+        )
+
+        self.intro_img_stimuli = visual.ElementArrayStim(
+            self.win,
+            units="pix",
+            elementTex=self.intro_img_path,
+            elementMask=None,
+            nElements=1,
+            sizes=[[760, 400]],
+            xys=np.array([[0.0, 200.0]]),
+            colors=np.array([[1, 1, 1]]),
+        )
+
+        self.intro_text_prompt = visual.TextStim(
+            self.win,
+            units="pix",
+            text="",
+            font="Times New Roman",
+            pos=[[0.0, -200.0]],
+            # color=tex_color,
+            # height=prompt_symbol_height,
+            bold=True,
+        )
+
+    def config_response(self, response_color=[[-0.5, 0.9, 0.5]]):
+        pass
+
+    def config_experiment_info(
+            self,
+            num_trials_per_block,
+            display_result_time,
+            stimuli_symbols,
+            n_back_types
+    ):
+        """Config experiment config.
+
+        Parameters
+        ----------
+            num_trials_per_block: int
+                number of trials per block.
+            display_result_time: float
+                time of displaying result.
+            stimuli_symbols: list
+               stimuli symbols .
+            n_back_types: list
+               label types.
+
+        """
+        self.num_trials_per_block = num_trials_per_block
+        self.display_result_time = display_result_time
+        self.stimuli_symbols = stimuli_symbols
+        self.n_back_types = n_back_types
+
+
+class arithmetic_task(VisualStim):
+
+    def __init__(self, win, colorSpace="rgb", allowGUI=True):
+        super().__init__(win=win, colorSpace=colorSpace, allowGUI=allowGUI)
+        self.task_types = ["个位数相加", "百位数相加"]
+        # 获得图像的路径
+        self.intro_img_path = os.path.join(
+            os.path.abspath(os.path.dirname(os.path.abspath(__file__))),
+            "imgs" + os.sep + "introduction_arithmetic_task.jpg",
+        )
+
+    def generate_arithmetic_task(self, task_type):
+        """
+        生成算术任务
+        :param task_type: 任务类型（个位数相加或百位数相加）
+        :return: 任务字符串、答案列表、正确答案
+        """
+        if task_type == "个位数相加":
+            num1 = random.randint(1, 9)
+            num2 = random.randint(1, 9)
+        else:
+            num1 = random.randint(100, 499)
+            num2 = random.randint(100, 499)
+
+        correct_answer = num1 + num2
+        incorrect_answer = [x for x in range(-10, 11) if x != 0]
+        incorrect_answer = correct_answer + random.choice(incorrect_answer)
+        answers = [correct_answer, incorrect_answer]
+        random.shuffle(answers)
+
+        return f"{num1} + {num2} = ?", answers, correct_answer
+
+    def display_prompt(self, window, text_stim, text_content, keyboard=None, fps=60, wait_time=0.0):
+        """
+        显示提示信息
+        :param window: PsychoPy窗口对象
+        :param text_stim: TextStim对象
+        :param text_content: 显示的文本内容
+        :param keyboard: 要监控的按键
+        :param fps: 帧率
+        :param wait_time: 等待时间（秒）
+        :return: None
+        """
+        text_content = add_spaces_between_chinese_chars(text_content)  # 在中文之间添加空格，实现自动换行
+        text_stim.text = text_content
+
+        # 计算总帧数
+        keys = []
+        iframe = 0
+        total_frames = int(fps * wait_time)
+
+        while iframe < total_frames:
+            # 绘制文本刺激
+            text_stim.draw()
+            # 刷新屏幕
+            window.flip()
+
+            if keyboard is not None and len(keys) == 0:
+                # 检查键盘输入
+                keys = event.getKeys(keyboard)
+
+            # 增加帧计数
+            iframe += 1
+
+        event.clearEvents(eventType='keyboard')
+        return keys
+
+    def config_color(
+            self,
+            refresh_rate=60,
+            text_pos=(0.0, 0.0),
+            tex_color=(1, -1, -1),
+            symbol_height=100,
+            prompt_symbol_height=40,
+    ):
+
+        self.refresh_rate = refresh_rate
+        if refresh_rate == 0:
+            refresh_rate = np.floor(
+                self.win.getActualFrameRate(nIdentical=20, nWarmUpFrames=20)
+            )
+
+        if symbol_height == 0:
+            symbol_height = int(self.win_size[1] / 6)
+
+        # note 文本提示
+        self.text_stimulus = visual.TextStim(
+            self.win,
+            text="start",
+            font="Times New Roman",
+            pos=text_pos,
+            color=tex_color,
+            units="pix",
+            height=symbol_height,
+            bold=True,
+        )
+
+        self.text_prompt = visual.TextStim(
+            self.win,
+            text="start",
+            font="Times New Roman",
+            pos=text_pos,
+            color=tex_color,
+            units="pix",
+            height=prompt_symbol_height,
+            bold=True,
+        )
+
+        self.intro_img_stimuli = visual.ElementArrayStim(
+            self.win,
+            units="pix",
+            elementTex=self.intro_img_path,
+            elementMask=None,
+            nElements=1,
+            sizes=[[760, 400]],
+            xys=np.array([[0.0, 200.0]]),
+            colors=np.array([[1, 1, 1]]),
+        )
+
+        self.intro_text_prompt = visual.TextStim(
+            self.win,
+            units="pix",
+            text="",
+            font="Times New Roman",
+            pos=[[0.0, -200.0]],
+            # color=tex_color,
+            # height=prompt_symbol_height,
+            bold=True,
+        )
+
+    def config_response(self, response_color=[[-0.5, 0.9, 0.5]]):
+        pass
+
+    def config_experiment_info(self, num_trials_per_block, display_result_time):
+        self.num_trials_per_block = num_trials_per_block
+        self.display_result_time = display_result_time
+
+
+def add_spaces_between_chinese_chars(text):
+    # 使用正则表达式匹配中文字符
+    pattern = re.compile(r'([\u4e00-\u9fff])')
+
+    # 在每个匹配到的中文字符前后插入空格
+    result = pattern.sub(r' \1 ', text).strip()
+
+    return result

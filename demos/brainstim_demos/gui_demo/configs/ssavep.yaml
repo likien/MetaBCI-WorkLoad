@@ -1,0 +1,10 @@
+configs:
+  fps:
+    value: 60
+    unit: fps
+  win_size_width:
+    value: 1920
+    unit: px
+  win_size_height:
+    value: 1080
+    unit: px
